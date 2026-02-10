@@ -47,4 +47,23 @@ class ClientController extends Controller
         $client->delete();
         return response()->json([], 204);
     }
+
+public function actualizarEtapa(Request $request, $id)
+{
+    $request->validate([
+        'etapa_crm' => 'required|in:Prospecto,Activo,Frecuente,Inactivo'
+    ]);
+
+    $cliente = Client::findOrFail($id);
+
+    $cliente->etapa_crm = $request->etapa_crm;
+    $cliente->save();
+
+    return response()->json([
+        'mensaje' => 'Etapa CRM actualizada correctamente',
+        'cliente' => $cliente
+    ]);
+}
+
+    
 }

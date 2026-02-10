@@ -17,6 +17,8 @@ class Client extends Model
         'empresa',
         'fecha_registro',
         'estado',
+        'etapa_crm',
+
     ];
 
     protected $casts = [

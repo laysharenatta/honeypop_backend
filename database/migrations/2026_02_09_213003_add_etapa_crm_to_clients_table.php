@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            //
+            $table->enum('etapa_crm', [
+                'Prospecto',
+                'Activo',
+                'Frecuente',
+                'Inactivo'
+            ])->default('Prospecto');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            //
+            $table->dropColumn('etapa_crm');
         });
     }
 };
