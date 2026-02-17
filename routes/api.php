@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InteraccionController;
 use App\Http\Controllers\MetricasController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProveedorController;
 
 
 Route::get('/user', function (Request $request) {
@@ -25,4 +27,5 @@ Route::get("/metricas",[MetricasController::class,"index"])->middleware("auth:sa
 Route::post("/login", [AuthController::class, "login"]);
 Route::middleware("auth:sanctum")->group(function () {
     Route::post("/logout", [AuthController::class, "logout"]);
+
 });
