@@ -19,13 +19,24 @@ Route::get('/clients/{id}', [ClientController::class, 'show']);
 Route::post('/clients', [ClientController::class, 'store']);
 Route::put('/clients/{id}', [ClientController::class, 'update']);
 Route::delete('/clients/{id}', [ClientController::class, 'destroy']);
+
 Route::get("/interacciones", [InteraccionController::class, "index"])->middleware("auth:sanctum");
 Route::post("/interacciones", [InteraccionController::class, "store"])->middleware("auth:sanctum");
+
 Route::get('/clientes/{id}/interacciones', [InteraccionController::class, 'historial']);
 Route::put("/clientes/{id}/etapa", [ClientController::class, "actualizarEtapa"]);
 Route::get("/metricas",[MetricasController::class,"index"])->middleware("auth:sanctum");
 Route::post("/login", [AuthController::class, "login"]);
 Route::middleware("auth:sanctum")->group(function () {
     Route::post("/logout", [AuthController::class, "logout"]);
+
+Route::get('/proveedores', [ProveedorController::class, 'index']);
+Route::post('/proveedores', [ProveedorController::class, 'store']);
+
+Route::get('/productos', [ProductoController::class, 'index']);
+Route::post('/productos', [ProductoController::class, 'store']);
+Route::put('/productos/{producto}', [ProductoController::class, 'update']);
+Route::delete('/productos/{producto}', [ProductoController::class, 'destroy']);
+
 
 });
