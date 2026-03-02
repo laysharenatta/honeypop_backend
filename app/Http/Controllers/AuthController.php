@@ -46,4 +46,31 @@ class AuthController extends Controller
             "message" => "Sesión cerrada correctamente"
         ]);
     }
+
+    // ✅ REGISTRO 
+    public function register(Request $request)
+    {
+        // Validar datos
+        $request->validate([
+            "name" => "required|string|max:255",
+            "email" => "required|email|unique:users,email",
+            "password" => "required|string|min:6"
+        ]);
+
+        // Crear usuario
+        $user = User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password)
+        ]);
+
+        // Crear token
+        $token = $user->createToken("token")->plainTextToken;
+
+        return response()->json([
+            "message" => "Registro exitoso",
+            "token" => $token,
+            "user" => $user
+        ], 201);
+    }
 }

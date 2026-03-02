@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Producto; // <- Esta línea es necesaria
+use App\Models\Producto;
 
 class Proveedor extends Model
 {
