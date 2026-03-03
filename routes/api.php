@@ -46,9 +46,7 @@ Route::post('/productos', [ProductoController::class, 'store']);
 Route::put('/productos/{producto}', [ProductoController::class, 'update']);
 Route::delete('/productos/{producto}', [ProductoController::class, 'destroy']);
 
-Route::post('/inventario/movimiento', 
-    [MovimientoInventarioController::class, 'store']);
-
+Route::post('/inventario/movimientos', [MovimientoInventarioController::class, 'store']);
 Route::get('/productos/{producto}/movimientos', [MovimientoInventarioController::class, 'movements']);
 
 });
