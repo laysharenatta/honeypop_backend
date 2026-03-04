@@ -16,6 +16,7 @@ class Producto extends Model
         'categoria',
         'stock_actual',
         'stock_minimo',
+        'estrategia_logistica',
         'proveedor_id',
         'costo_unitario',
     ];
@@ -26,9 +27,8 @@ class Producto extends Model
     }
 
     // Un producto tiene muchos movimientos
-public function movimientos()
-{
-    return $this->hasMany(MovimientoInventario::class);
-}
-
+    public function movimientos()
+    {
+        return $this->hasMany(MovimientoInventario::class);
+    }
 }
