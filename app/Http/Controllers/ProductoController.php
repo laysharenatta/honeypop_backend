@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Producto::with('proveedor')->get());
+        $query = Producto::with('proveedor');
+
+        if ($request->has('estrategia')) {
+            $query->where('estrategia_logistica', $request->query('estrategia'));
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -21,6 +27,7 @@ class ProductoController extends Controller
             'stock_minimo' => 'required|integer',
             'proveedor_id' => 'required|exists:proveedors,id',
             'costo_unitario' => 'required|numeric',
+            'estrategia_logistica' => 'nullable|in:PUSH,PULL',
         ]);
 
         $producto = Producto::create($request->all());
@@ -30,6 +37,13 @@ class ProductoController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $producto->update($request->all());
+        return response()->json($producto);
+    }
+
+    public function updateEstrategia(Request $request, Producto $producto)
+    {
+        $producto->update(['estrategia_logistica' => $request->estrategia_logistica]);
+
         return response()->json($producto);
     }
 

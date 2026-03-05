@@ -22,7 +22,7 @@ class MovimientoInventarioController extends Controller
         // Si es ENTRADA
         if ($request->tipo === 'entrada') {
             $producto->stock_actual += $request->cantidad;
-        } 
+        }
         // Si es SALIDA
         else {
             if ($producto->stock_actual < $request->cantidad) {
@@ -47,10 +47,9 @@ class MovimientoInventarioController extends Controller
         return response()->json($movimiento, 201);
     }
 
-public function movements(Producto $producto)
+    public function movements(Producto $producto)
     {
-        $movements = $producto->movimientos()->orderBy('fecha', 'desc')->get(); 
+        $movements = $producto->movimientos()->orderBy('fecha', 'desc')->get();
         return response()->json($movements);
     }
-
 }

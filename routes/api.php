@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\MovimientoInventarioController;
+use App\Http\Controllers\PedidoController;
 
 /*TODAS LAS RUTAS QUE HAGAS NUEVAS, METELAS DENTRO DE EL BLOQUE DE RUTAS DE ABAJO, LAS QUE ESTAN PROTEGIDAS POR SANCTUM*/
 
@@ -46,6 +47,12 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::post('/productos', [ProductoController::class, 'store']);
     Route::put('/productos/{producto}', [ProductoController::class, 'update']);
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy']);
+    Route::put('/productos/{producto}/estrategia', [ProductoController::class, 'updateEstrategia']);
+
+    //Pedidos
+    Route::get('/pedidos', [PedidoController::class, 'index']);
+    Route::post('/pedidos', [PedidoController::class, 'store']);
+    Route::put('/pedidos/{pedido}/estado', [PedidoController::class, 'updateEstado']);
 
     //Movimientos
     Route::post('/inventario/movimientos', [MovimientoInventarioController::class, 'store']);
