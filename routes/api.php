@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\MovimientoInventarioController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ReportesController;
 
 /*TODAS LAS RUTAS QUE HAGAS NUEVAS, METELAS DENTRO DE EL BLOQUE DE RUTAS DE ABAJO, LAS QUE ESTAN PROTEGIDAS POR SANCTUM*/
 
@@ -57,4 +58,10 @@ Route::middleware("auth:sanctum")->group(function () {
     //Movimientos
     Route::post('/inventario/movimientos', [MovimientoInventarioController::class, 'store']);
     Route::get('/productos/{producto}/movimientos', [MovimientoInventarioController::class, 'movements']);
+
+    //Reportes
+    Route::get('/reportes/productos-mas-vendidos', [ReportesController::class, 'productosMasVendidos']);
+    Route::get('/reportes/inventario-critico', [ReportesController::class, 'inventarioCritico']);
+    Route::get('/reportes/rotacion-lenta', [ReportesController::class, 'rotacionLenta']);
+    Route::get('/reportes/conteo-estrategias', [ReportesController::class, 'conteoEstrategias']);
 });
