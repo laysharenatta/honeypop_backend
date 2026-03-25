@@ -64,4 +64,20 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get('/reportes/inventario-critico', [ReportesController::class, 'inventarioCritico']);
     Route::get('/reportes/rotacion-lenta', [ReportesController::class, 'rotacionLenta']);
     Route::get('/reportes/conteo-estrategias', [ReportesController::class, 'conteoEstrategias']);
+
+    // Órdenes Empresariales
+    Route::get('/ordenes', [\App\Http\Controllers\OrderController::class, 'index']);
+    Route::post('/ordenes', [\App\Http\Controllers\OrderController::class, 'store']);
+    Route::post('/ordenes/procesar', [\App\Http\Controllers\OrderController::class, 'store']);
+    Route::get('/ordenes/{id}', [\App\Http\Controllers\OrderController::class, 'show']);
+    Route::put('/ordenes/{id}/estado', [\App\Http\Controllers\OrderController::class, 'updateEstado']);
+
+    // ERP y Roles
+    Route::get('/usuarios/rol', function(Request $request) {
+        return response()->json(['rol' => $request->user()->rol]);
+    });
+    Route::get('/erp/estado', [\App\Http\Controllers\EstadoERPController::class, 'index']);
+    Route::put('/erp/estado', [\App\Http\Controllers\EstadoERPController::class, 'update']);
+    Route::get('/erp/metricas', [\App\Http\Controllers\DashboardERPController::class, 'index']);
+
 });
