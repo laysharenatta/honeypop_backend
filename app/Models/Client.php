@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Interaccion;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Client extends Model
+class Client extends Authenticatable
 {
-    use SoftDeletes;
+    use HasApiTokens, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'nombre',
@@ -18,12 +19,18 @@ class Client extends Model
         'fecha_registro',
         'estado',
         'etapa_crm',
+        'password',
+    ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
         'fecha_registro' => 'date',
         'estado' => 'boolean',
+        'password' => 'hashed',
     ];
 
     // Relación: un cliente tiene muchas interacciones

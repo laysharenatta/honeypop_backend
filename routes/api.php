@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InteraccionController;
@@ -45,6 +46,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     //Productos
     Route::get('/productos', [ProductoController::class, 'index']);
+    Route::get('/productos/{id}', [ProductoController::class, 'show']);
     Route::post('/productos', [ProductoController::class, 'store']);
     Route::put('/productos/{producto}', [ProductoController::class, 'update']);
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy']);
@@ -80,4 +82,15 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::put('/erp/estado', [\App\Http\Controllers\EstadoERPController::class, 'update']);
     Route::get('/erp/metricas', [\App\Http\Controllers\DashboardERPController::class, 'index']);
 
+});
+
+// ─── Autenticación de Clientes (frontend de clientes) ────────────────────────
+Route::prefix('cliente')->group(function () {
+    Route::post('/login', [ClientAuthController::class, 'login']);
+    Route::post('/register', [ClientAuthController::class, 'register']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [ClientAuthController::class, 'logout']);
+        Route::get('/me', [ClientAuthController::class, 'me']);
+    });
 });

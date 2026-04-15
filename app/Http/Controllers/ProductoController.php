@@ -11,6 +11,14 @@ class ProductoController extends Controller
     {
         $query = Producto::with('proveedor');
 
+        if ($request->has('categoria')) {
+            $query->where('categoria', $request->query('categoria'));
+        }
+
+        if ($request->has('buscar')) {
+            $query->where('nombre', 'like', '%' . $request->query('buscar') . '%');
+        }
+
         if ($request->has('estrategia')) {
             $query->where('estrategia_logistica', $request->query('estrategia'));
         }
@@ -33,6 +41,17 @@ class ProductoController extends Controller
         $producto = Producto::create($request->all());
         return response()->json($producto, 201);
     }
+
+        public function show($id)
+        {
+            $producto = Producto::with('proveedor')->find($id);
+
+            if (!$producto) {
+                return response()->json(['message' => 'Producto no encontrado'], 404);
+            }
+
+            return response()->json($producto);
+        }
 
     public function update(Request $request, Producto $producto)
     {
