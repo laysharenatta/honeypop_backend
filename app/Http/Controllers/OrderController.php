@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Producto;
 use App\Models\MovimientoInventario;
+use App\Models\Promocion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -46,16 +47,20 @@ class OrderController extends Controller
         try {
             $total = 0;
             $productosToAttach = [];
-            
+
             // Validate and calculate real total using the actual product cost
             foreach ($request->productos as $prod) {
                 $producto = Producto::lockForUpdate()->find($prod['id']);
-                
+
                 if ($producto->stock_actual < $prod['cantidad']) {
                     return response()->json(['message' => 'Stock insuficiente para el producto: ' . $producto->nombre], 400);
                 }
 
                 $precioUnitario = $producto->costo_unitario; // Using costo unitario as precio
+
+                // Apply active promotions to the product
+                $precioUnitario = $this->aplicarDescuentosPromocion($producto, $precioUnitario);
+
                 $subtotal = $precioUnitario * $prod['cantidad'];
                 $total += $subtotal;
 
@@ -64,11 +69,11 @@ class OrderController extends Controller
                     'cantidad' => $prod['cantidad'],
                     'precio_unitario' => $precioUnitario
                 ];
-                
+
                 // Inventory Logic: decrement stock securely
                 $producto->stock_actual -= $prod['cantidad'];
                 $producto->save();
-                
+
                 // Register movement
                 MovimientoInventario::create([
                     'producto_id' => $producto->id,
@@ -111,11 +116,48 @@ class OrderController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
-        
+
         $order->update([
             'estado' => $request->estado,
         ]);
 
         return response()->json($order);
+    }
+
+    /**
+     * Apply the best active promotion discount to a product price
+     * Returns the price with the maximum discount applied
+     */
+    private function aplicarDescuentosPromocion(Producto $producto, $precioUnitario)
+    {
+        $today = now()->toDateString();
+
+        // Get all active promotions for this product
+        $promocionesActivas = $producto->promociones()
+            ->where('estado', 'activa')
+            ->where('fecha_inicio', '<=', $today)
+            ->where('fecha_fin', '>=', $today)
+            ->get();
+
+        if ($promocionesActivas->isEmpty()) {
+            return $precioUnitario;
+        }
+
+        // Calculate all possible discounts and apply the maximum
+        $descuentoMaximo = 0;
+
+        foreach ($promocionesActivas as $promocion) {
+            if ($promocion->tipo_descuento === 'porcentaje') {
+                $descuento = ($precioUnitario * $promocion->valor) / 100;
+            } else { // monto_fijo
+                $descuento = $promocion->valor;
+            }
+
+            if ($descuento > $descuentoMaximo) {
+                $descuentoMaximo = $descuento;
+            }
+        }
+
+        return $precioUnitario - $descuentoMaximo;
     }
 }

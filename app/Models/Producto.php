@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MovimientoInventario;
+use App\Models\Promocion;
 
 class Producto extends Model
 {
@@ -30,5 +31,14 @@ class Producto extends Model
     public function movimientos()
     {
         return $this->hasMany(MovimientoInventario::class);
+    }
+
+    /**
+     * Get the promotions for this product.
+     */
+    public function promociones()
+    {
+        return $this->belongsToMany(Promocion::class, 'producto_promocion')
+                    ->withTimestamps();
     }
 }

@@ -10,8 +10,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\MovimientoInventarioController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ReportesController;
+use App\Http\Controllers\PromocionController;
+use App\Http\Controllers\AtencionTicketController;
 
 /*TODAS LAS RUTAS QUE HAGAS NUEVAS, METELAS DENTRO DE EL BLOQUE DE RUTAS DE ABAJO, LAS QUE ESTAN PROTEGIDAS POR SANCTUM*/
 
@@ -52,6 +55,13 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::delete('/productos/{producto}', [ProductoController::class, 'destroy']);
     Route::put('/productos/{producto}/estrategia', [ProductoController::class, 'updateEstrategia']);
 
+    //Promociones
+    Route::get('/promociones', [PromocionController::class, 'index']);
+    Route::post('/promociones', [PromocionController::class, 'store']);
+    Route::get('/promociones/{id}', [PromocionController::class, 'show']);
+    Route::put('/promociones/{id}', [PromocionController::class, 'update']);
+    Route::delete('/promociones/{id}', [PromocionController::class, 'destroy']);
+
     //Pedidos
     Route::get('/pedidos', [PedidoController::class, 'index']);
     Route::post('/pedidos', [PedidoController::class, 'store']);
@@ -74,6 +84,12 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get('/ordenes/{id}', [\App\Http\Controllers\OrderController::class, 'show']);
     Route::put('/ordenes/{id}/estado', [\App\Http\Controllers\OrderController::class, 'updateEstado']);
 
+    // Tickets de Atención
+    Route::get('/atencion/tickets', [AtencionTicketController::class, 'index']);
+    Route::post('/atencion/tickets', [AtencionTicketController::class, 'store']);
+    Route::get('/atencion/tickets/{id}', [AtencionTicketController::class, 'show']);
+    Route::put('/atencion/tickets/{id}/respuesta', [AtencionTicketController::class, 'updateRespuesta']);
+
     // ERP y Roles
     Route::get('/usuarios/rol', function(Request $request) {
         return response()->json(['rol' => $request->user()->rol]);
@@ -92,5 +108,17 @@ Route::prefix('cliente')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [ClientAuthController::class, 'logout']);
         Route::get('/me', [ClientAuthController::class, 'me']);
+        Route::post('/pagos/procesar', [PagoController::class, 'procesar']);
+        Route::get('/pagos/{id}', [PagoController::class, 'show']);
+
+        // Carrito
+        Route::prefix('carrito')->group(function () {
+            Route::post('/agregar', [\App\Http\Controllers\CarritoController::class, 'agregar']);
+            Route::get('/', [\App\Http\Controllers\CarritoController::class, 'show']);
+            Route::put('/item/{item_id}', [\App\Http\Controllers\CarritoController::class, 'updateItem']);
+            Route::delete('/item/{item_id}', [\App\Http\Controllers\CarritoController::class, 'removeItem']);
+            Route::delete('/vaciar', [\App\Http\Controllers\CarritoController::class, 'vaciar']);
+            Route::post('/comprar', [\App\Http\Controllers\CarritoController::class, 'comprar']);
+        });
     });
 });
