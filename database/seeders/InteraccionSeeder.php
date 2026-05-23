@@ -25,21 +25,22 @@ class InteraccionSeeder extends Seeder
             [
                 'cliente_id' => $clients->first()->id,
                 'usuario_id' => $users->first()->id,
-                'tipo' => 'Llamada',
+                // migration enum: tipo => ['llamada','correo','reunion']
+                'tipo' => 'llamada',
                 'descripcion' => 'Llamada de seguimiento para prospecto.',
                 'fecha' => now()->subDays(3),
             ],
             [
                 'cliente_id' => $clients->skip(1)->first()->id ?? $clients->first()->id,
                 'usuario_id' => $users->skip(1)->first()->id ?? $users->first()->id,
-                'tipo' => 'Correo',
+                'tipo' => 'correo',
                 'descripcion' => 'Enlace a catálogo enviado.',
                 'fecha' => now()->subDay(),
             ],
             [
                 'cliente_id' => $clients->last()->id,
                 'usuario_id' => $users->first()->id,
-                'tipo' => 'Visita',
+                'tipo' => 'reunion',
                 'descripcion' => 'Reunión presencial para cerrar trato.',
                 'fecha' => now(),
             ],

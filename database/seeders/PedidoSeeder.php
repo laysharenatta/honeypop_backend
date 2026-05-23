@@ -23,14 +23,16 @@ class PedidoSeeder extends Seeder
             [
                 'producto_id' => $productos->skip(1)->first()->id ?? $productos->first()->id,
                 'cantidad' => 100,
-                'tipo' => 'Entrada',
-                'estado' => 'Completado',
+                // migration enum: tipo => ['reposicion','venta']
+                // migration enum: estado => ['pendiente','surtido']
+                'tipo' => 'reposicion',
+                'estado' => 'surtido',
             ],
             [
                 'producto_id' => $productos->last()->id,
                 'cantidad' => 50,
-                'tipo' => 'Compra',
-                'estado' => 'Pendiente',
+                'tipo' => 'reposicion',
+                'estado' => 'pendiente',
             ],
         ];
 

@@ -14,7 +14,7 @@ class EstadoERPSeeder extends Seeder
     {
         EstadoERP::updateOrCreate(
             ['id' => 1],
-            ['nivel' => 'normal']
+            ['nivel' => 'Básico']
         );
     }
 }

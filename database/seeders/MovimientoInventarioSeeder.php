@@ -22,30 +22,33 @@ class MovimientoInventarioSeeder extends Seeder
         $movimientos = [
             [
                 'producto_id' => $productos->first()->id,
-                'tipo' => 'Entrada',
+                // migration enum: tipo => ['entrada','salida']
+                // migration enum: motivo => ['venta','reposición','ajuste']
+                'tipo' => 'entrada',
                 'cantidad' => 100,
-                'motivo' => 'Compra a proveedor',
+                'motivo' => 'reposición',
                 'fecha' => now()->subDays(5),
             ],
             [
                 'producto_id' => $productos->first()->id,
-                'tipo' => 'Salida',
+                'tipo' => 'salida',
                 'cantidad' => 20,
-                'motivo' => 'Venta Directa',
+                'motivo' => 'venta',
                 'fecha' => now()->subDays(2),
             ],
             [
                 'producto_id' => $productos->skip(1)->first()->id ?? $productos->first()->id,
-                'tipo' => 'Entrada',
+                'tipo' => 'entrada',
                 'cantidad' => 50,
-                'motivo' => 'Ajuste de inventario',
+                'motivo' => 'ajuste',
                 'fecha' => now()->subDay(),
             ],
             [
                 'producto_id' => $productos->last()->id,
-                'tipo' => 'Salida',
+                'tipo' => 'salida',
                 'cantidad' => 5,
-                'motivo' => 'Muestra gratis',
+                // 'Muestra gratis' -> no exact enum, choose 'ajuste' (inventory adjustment)
+                'motivo' => 'ajuste',
                 'fecha' => now(),
             ],
         ];

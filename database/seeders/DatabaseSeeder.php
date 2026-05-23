@@ -24,8 +24,26 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            // Usuarios / roles (create test users used by other seeders)
+            RolUsersSeeder::class,
+
+            // Proveedores -> Productos depend de Proveedor
             ProveedorSeeder::class,
+            ProductoSeeder::class,
+
+            // Estado global independiente
+            EstadoERPSeeder::class,
+
+            // Clientes
             ClientSeeder::class,
+
+            // Movimientos/Pedidos que dependen de Productos
+            PedidoSeeder::class,
+            MovimientoInventarioSeeder::class,
+
+            // Órdenes e interacciones (requieren Client, User, Producto)
+            OrderSeeder::class,
+            InteraccionSeeder::class,
         ]);
     }
 }
