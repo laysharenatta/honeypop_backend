@@ -21,6 +21,7 @@ class PedidoController extends Controller
             'cantidad' => 'required|integer|min:1',
             'tipo' => 'required|in:reposicion,venta',
             'estado' => 'nullable|in:pendiente,surtido',
+            'etapa' => 'nullable|in:en_preparacion,en_transito,en_entrega,entregado',
         ]);
 
         $pedido = Pedido::create($request->all());
@@ -52,6 +53,17 @@ class PedidoController extends Controller
                 'fecha' => now()
             ]);
         }
+
+        return response()->json($pedido);
+    }
+
+    public function updateEtapa(Request $request, Pedido $pedido)
+    {
+        $request->validate([
+            'etapa' => 'required|in:en_preparacion,en_transito,en_entrega,entregado',
+        ]);
+
+        $pedido->update(['etapa' => $request->etapa]);
 
         return response()->json($pedido);
     }

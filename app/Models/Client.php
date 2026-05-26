@@ -38,4 +38,10 @@ class Client extends Authenticatable
     {
         return $this->hasMany(Interaccion::class, 'cliente_id');
     }
+
+    // Relación: un cliente tiene una dirección de facturación
+    public function billingAddress()
+    {
+        return $this->hasOne(BillingAddress::class);
+    }
 }

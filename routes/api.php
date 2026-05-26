@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\ClientBillingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InteraccionController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\PromocionController;
 use App\Http\Controllers\AtencionTicketController;
+use App\Http\Controllers\ImpuestoController;
 
 /*TODAS LAS RUTAS QUE HAGAS NUEVAS, METELAS DENTRO DE EL BLOQUE DE RUTAS DE ABAJO, LAS QUE ESTAN PROTEGIDAS POR SANCTUM*/
 
@@ -35,6 +37,12 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::delete('/clientes/{id}', [ClientController::class, 'destroy']);
     Route::get('/clientes/{id}/interacciones', [InteraccionController::class, 'historial']);
     Route::put("/clientes/{id}/etapa", [ClientController::class, "actualizarEtapa"]);
+
+    //Dirección de Facturación
+    Route::get('/clientes/{clientId}/facturacion', [ClientBillingController::class, 'show']);
+    Route::post('/clientes/{clientId}/facturacion', [ClientBillingController::class, 'store']);
+    Route::put('/clientes/{clientId}/facturacion', [ClientBillingController::class, 'update']);
+    Route::delete('/clientes/{clientId}/facturacion', [ClientBillingController::class, 'destroy']);
 
     //Interacciones
     Route::get("/interacciones", [InteraccionController::class, "index"]);
@@ -66,6 +74,7 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index']);
     Route::post('/pedidos', [PedidoController::class, 'store']);
     Route::put('/pedidos/{pedido}/estado', [PedidoController::class, 'updateEstado']);
+    Route::put('/pedidos/{pedido}/etapa', [PedidoController::class, 'updateEtapa']);
 
     //Movimientos
     Route::post('/inventario/movimientos', [MovimientoInventarioController::class, 'store']);
@@ -97,6 +106,13 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get('/erp/estado', [\App\Http\Controllers\EstadoERPController::class, 'index']);
     Route::put('/erp/estado', [\App\Http\Controllers\EstadoERPController::class, 'update']);
     Route::get('/erp/metricas', [\App\Http\Controllers\DashboardERPController::class, 'index']);
+
+    // Impuestos
+    Route::get('/impuestos', [ImpuestoController::class, 'index']);
+    Route::post('/impuestos', [ImpuestoController::class, 'store']);
+    Route::get('/impuestos/{id}', [ImpuestoController::class, 'show']);
+    Route::put('/impuestos/{id}', [ImpuestoController::class, 'update']);
+    Route::delete('/impuestos/{id}', [ImpuestoController::class, 'destroy']);
 
 });
 

@@ -15,6 +15,7 @@ class Pedido extends Model
         'cantidad',
         'tipo',
         'estado',
+        'etapa',
     ];
 
     public function producto()
