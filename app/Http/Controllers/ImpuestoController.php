@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreImpuestoRequest;
 use App\Http\Requests\UpdateImpuestoRequest;
 use App\Models\Impuesto;
+use App\Services\TaxService;
 use Illuminate\Http\Request;
 
 class ImpuestoController extends Controller
@@ -45,5 +46,20 @@ class ImpuestoController extends Controller
         $impuesto->delete();
 
         return response()->json([], 204);
+    }
+
+    /**
+     * GET /impuestos/activos
+     * Retorna los impuestos activos y la tasa total combinada.
+     */
+    public function activos()
+    {
+        $impuestos = TaxService::getActiveImpuestos();
+        $tasaTotal = TaxService::getTotalRate();
+
+        return response()->json([
+            'impuestos' => $impuestos,
+            'tasa_total' => $tasaTotal,
+        ]);
     }
 }

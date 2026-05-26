@@ -18,6 +18,9 @@ class Order extends Model
         'cliente_id',
         'fecha',
         'estado', // boolean
+        'subtotal',
+        'impuesto_monto',
+        'impuesto_porcentaje',
         'total',
         'user_id'
     ];
@@ -44,7 +47,7 @@ class Order extends Model
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'order_product')
-                    ->withPivot('cantidad', 'precio_unitario')
-                    ->withTimestamps();
+            ->withPivot('cantidad', 'precio_unitario')
+            ->withTimestamps();
     }
 }

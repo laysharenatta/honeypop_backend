@@ -29,7 +29,7 @@ class UpdateClientRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('clients', 'correo')->ignore($this->client),
+                Rule::unique('clients', 'correo')->ignore($this->route('id')),
             ],
             'telefono' => ['sometimes', 'nullable', 'string', 'max:255'],
             'empresa' => ['sometimes', 'nullable', 'string', 'max:255'],

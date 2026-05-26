@@ -11,6 +11,9 @@ class Pago extends Model
     protected $fillable = [
         'pedido_id',
         'monto',
+        'subtotal',
+        'impuesto_monto',
+        'impuesto_porcentaje',
         'metodo_pago',
         'estado',
         'fecha'

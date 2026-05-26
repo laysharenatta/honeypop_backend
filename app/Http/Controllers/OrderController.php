@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Producto;
 use App\Models\MovimientoInventario;
 use App\Models\Promocion;
+use App\Services\TaxService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +46,7 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            $total = 0;
+            $subtotal = 0;
             $productosToAttach = [];
 
             // Validate and calculate real total using the actual product cost
@@ -61,8 +62,8 @@ class OrderController extends Controller
                 // Apply active promotions to the product
                 $precioUnitario = $this->aplicarDescuentosPromocion($producto, $precioUnitario);
 
-                $subtotal = $precioUnitario * $prod['cantidad'];
-                $total += $subtotal;
+                $subtotalProducto = $precioUnitario * $prod['cantidad'];
+                $subtotal += $subtotalProducto;
 
                 // Prepare pivot data
                 $productosToAttach[$producto->id] = [
@@ -84,13 +85,19 @@ class OrderController extends Controller
                 ]);
             }
 
+            // Calcular impuestos dinámicamente
+            $impuestos = TaxService::calcular($subtotal);
+
             // Create Order
             $order = Order::create([
                 'cliente_id' => $request->cliente_id,
                 'user_id' => $request->user_id,
                 'fecha' => now()->toDateString(),
                 'estado' => false, // false as pending
-                'total' => $total,
+                'subtotal' => $impuestos['subtotal'],
+                'impuesto_monto' => $impuestos['impuesto_monto'],
+                'impuesto_porcentaje' => $impuestos['impuesto_porcentaje'],
+                'total' => $impuestos['total'],
             ]);
 
             // Attach products
@@ -98,7 +105,12 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return response()->json($order->load(['client', 'user', 'productos']), 201);
+            $order->load(['client', 'user', 'productos']);
+
+            return response()->json([
+                'order' => $order,
+                'impuestos_aplicados' => $impuestos['impuestos_aplicados'],
+            ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();

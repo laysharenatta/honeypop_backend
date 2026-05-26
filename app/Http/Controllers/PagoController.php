@@ -6,6 +6,7 @@ use App\Models\Pago;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\MovimientoInventario;
+use App\Services\TaxService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -38,8 +39,9 @@ class PagoController extends Controller
             // Según la regla actual, se usa el costo del producto como precio base.
             $precioUnitario = $producto->costo_unitario; // u otro campo como 'precio'
             $subtotal = $precioUnitario * $request->cantidad;
-            $impuesto = $subtotal * 0.16; // 16% de impuestos
-            $total = $subtotal + $impuesto;
+
+            // Calcular impuestos dinámicamente desde la BD
+            $impuestos = TaxService::calcular($subtotal);
 
             // Generar el Pedido (tipo venta, estado completado/pendiente según lógica)
             $pedido = Pedido::create([
@@ -61,10 +63,13 @@ class PagoController extends Controller
                 'fecha' => now()
             ]);
 
-            // Registrar el Pago
+            // Registrar el Pago con desglose de impuestos
             $pago = Pago::create([
                 'pedido_id' => $pedido->id,
-                'monto' => $total,
+                'monto' => $impuestos['total'],
+                'subtotal' => $impuestos['subtotal'],
+                'impuesto_monto' => $impuestos['impuesto_monto'],
+                'impuesto_porcentaje' => $impuestos['impuesto_porcentaje'],
                 'metodo_pago' => $request->metodo_pago,
                 'estado' => 'completado', // simulación de pago exitoso
                 'fecha' => now()
@@ -74,7 +79,8 @@ class PagoController extends Controller
 
             return response()->json([
                 'message' => 'Pago procesado y pedido generado exitosamente.',
-                'pago' => $pago->load('pedido.producto')
+                'pago' => $pago->load('pedido.producto'),
+                'impuestos_aplicados' => $impuestos['impuestos_aplicados'],
             ], 201);
 
         } catch (\Exception $e) {

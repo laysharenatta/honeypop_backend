@@ -8,6 +8,7 @@ use App\Models\Producto;
 use App\Models\Pedido;
 use App\Models\Pago;
 use App\Models\MovimientoInventario;
+use App\Services\TaxService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,14 +38,16 @@ class CarritoController extends Controller
             $subtotal += $detalle->cantidad * $detalle->precio_unitario;
         }
 
-        $impuestos = $subtotal * 0.16;
-        $total = $subtotal + $impuestos;
+        // Calcular impuestos dinámicamente desde la BD
+        $impuestos = TaxService::calcular($subtotal);
 
         return response()->json([
             'carrito' => $carrito,
-            'subtotal' => $subtotal,
-            'impuestos' => $impuestos,
-            'total' => $total
+            'subtotal' => $impuestos['subtotal'],
+            'impuesto_porcentaje' => $impuestos['impuesto_porcentaje'],
+            'impuesto_monto' => $impuestos['impuesto_monto'],
+            'total' => $impuestos['total'],
+            'impuestos_aplicados' => $impuestos['impuestos_aplicados'],
         ]);
     }
 
@@ -151,8 +154,9 @@ class CarritoController extends Controller
                 }
 
                 $subtotalItem = $detalle->precio_unitario * $detalle->cantidad;
-                $impuestoItem = $subtotalItem * 0.16;
-                $totalItem = $subtotalItem + $impuestoItem;
+
+                // Calcular impuestos dinámicamente desde la BD
+                $impuestosItem = TaxService::calcular($subtotalItem);
 
                 // Crear el Pedido (1 a 1 por producto como acordado)
                 $pedido = Pedido::create([
@@ -174,10 +178,13 @@ class CarritoController extends Controller
                     'fecha' => now()
                 ]);
 
-                // Registrar el Pago
+                // Registrar el Pago con desglose de impuestos
                 $pago = Pago::create([
                     'pedido_id' => $pedido->id,
-                    'monto' => $totalItem,
+                    'monto' => $impuestosItem['total'],
+                    'subtotal' => $impuestosItem['subtotal'],
+                    'impuesto_monto' => $impuestosItem['impuesto_monto'],
+                    'impuesto_porcentaje' => $impuestosItem['impuesto_porcentaje'],
                     'metodo_pago' => $request->metodo_pago,
                     'estado' => 'completado',
                     'fecha' => now()
